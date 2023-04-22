@@ -7,5 +7,14 @@ namespace NailsBookingApp_API.Models
         public string Name { get; set; }
         public string LastName { get; set; }
 
+        public string? PassResetToken { get; set; }
+        public DateTime? PassResetExpirationDate { get; set; }
+        public DateTime? AccountCreateDate { get; set; }
+
+        public ApplicationUser()
+        {
+            AccountCreateDate = DateTime.Now;
+        }
+
     }
 }

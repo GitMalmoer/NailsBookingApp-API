@@ -1,4 +1,4 @@
-﻿namespace NailsBookingApp_API.Models.DTO
+﻿namespace NailsBookingApp_API.Models.DTO.AUTHDTO
 {
     public class LoginRequestDTO
     {

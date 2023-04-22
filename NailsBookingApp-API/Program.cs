@@ -7,6 +7,11 @@ using Microsoft.OpenApi.Models;
 using NailsBookingApp_API.Models;
 using System.Text;
 using NailsBookingApp_API.Data;
+using NailsBookingApp_API.Middleware;
+using NailsBookingApp_API.Services;
+using NLog;
+using Stripe.BillingPortal;
+using NLog.Web;
 
 namespace NailsBookingApp_API
 {
@@ -14,67 +19,96 @@ namespace NailsBookingApp_API
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+            logger.Debug("init main");
 
-            // Add services to the container.
-
-            builder.Services.AddControllers();
-
-            builder.Services.AddDbContext<AppDbContext>(options =>
+            try
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
-            });
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+                var builder = WebApplication.CreateBuilder(args);
 
-            // IDENTITY OPTIONS
-            builder.Services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequiredLength = 1;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-            });
-            //AUTH
-            var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
-            // Add services to the container.
-            builder.Services.AddAuthentication(u =>
-            {
-                u.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                u.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(u =>
-            {
-                u.RequireHttpsMetadata = false;
-                u.SaveToken = true;
-                u.TokenValidationParameters = new TokenValidationParameters()
+                // Add services to the container.
+
+                builder.Services.AddControllers();
+
+
+                builder.Services.AddTransient<ErrorHandlingMiddleware>();
+
+                // SETTING UP CONNECTION WITH DB
+                builder.Services.AddDbContext<AppDbContext>(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
-            });
-
-            builder.Services.AddAuthorization();
-
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
-            {
-                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                {
-                    Description =
-                        "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
-                        "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
-                        "Example: \"Bearer 12345abcdef\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Scheme = JwtBearerDefaults.AuthenticationScheme
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
                 });
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+
+
+                // ADDING SERVICE OF IDENTITY
+                builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddDefaultTokenProviders();
+                // ADD DEFAUTL TOKEN PRVIDERS IS USED FOR SENDING EMAIL WITH CONFIRMATION 
+                //_userManager.GenerateEmailConfirmationTokenAsync
+
+                // IDENTITY OPTIONS
+                builder.Services.Configure<IdentityOptions>(options =>
                 {
+                    options.Password.RequiredLength = 1;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                });
+                //AUTH
+                var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+                // Add services to the container.
+                builder.Services.AddAuthentication(u =>
+                {
+                    u.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    u.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(u =>
+                {
+                    u.RequireHttpsMetadata = false;
+                    u.SaveToken = true;
+                    u.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                    };
+                });
+
+                //ADD EMAIL CONFIG
+                var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+
+                // EMAIL CONFIG IS AS SINNGLETON
+                builder.Services.AddSingleton(emailConfig);
+
+                builder.Services.AddScoped<IEmailService, EmailService>();
+
+
+                builder.Services.AddAuthorization();
+
+
+
+
+                // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+                builder.Services.AddEndpointsApiExplorer();
+
+                //SWGGER START
+                builder.Services.AddSwaggerGen(options =>
+                {
+                    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                    {
+                        Description =
+                            "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
+                            "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                            "Example: \"Bearer 12345abcdef\"",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme
+                    });
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                    {
                     {
                         new OpenApiSecurityScheme
                         {
@@ -89,28 +123,49 @@ namespace NailsBookingApp_API
                         },
                         new List<string>()
                     }
+                    });
                 });
-            });
+                // SWAGGER END
 
-            var app = builder.Build();
+                // LOGGGING 
+                //builder.Logging.ClearProviders();
+                builder.Host.UseNLog();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                var app = builder.Build();
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
+
+                app.UseHttpsRedirection();
+
+                app.UseAuthorization();
+
+                app.UseMiddleware<ErrorHandlingMiddleware>();
+
+
+                app.MapControllers();
+
+                // APP DB SEEDER
+                AppDbInitializer.SeedRolesAndUsers(app).Wait();
+
+                app.Run();
+
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            AppDbInitializer.SeedRolesAndUsers(app).Wait();
-
-            app.Run();
+            catch (Exception exception)
+            {
+                // NLog: catch setup errors
+                logger.Error(exception, "Stopped program because of exception");
+                throw (exception);
+            }
+            finally
+            {
+                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                NLog.LogManager.Shutdown();
+            }
         }
     }
 }

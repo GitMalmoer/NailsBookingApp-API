@@ -2,19 +2,18 @@
 
 namespace NailsBookingApp_API.Models.DTO
 {
-    public class RegisterRequestDTO
+    public class EmailQuestionDTO
     {
         [Required]
-        public string UserName { get; set; }
-        [Required]
+        [MaxLength(50)]
         public string Name { get; set; }
         [Required]
-        public string LastName { get; set; }
-        [Required]
+
+        [MaxLength(100)]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
-        public string Password { get; set; }
-
-
+        [MaxLength(250)]
+        public string Message { get; set; }
     }
 }
