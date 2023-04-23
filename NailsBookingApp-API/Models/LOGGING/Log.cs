@@ -8,20 +8,21 @@ namespace NailsBookingApp_API.Models.LOGGING
 {
     public class Log
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
-        public DateTime CreatedOn { get; set; }
-        [MaxLength(10)]
-        public string? Level { get; set; }
-        public string? Message { get; set; }
-        public string? StackTrace { get; set; }
-        public string? Exception { get; set; }
-        [MaxLength(255)]
+        public string MachineName { get; set; } = null!;
+
+        public DateTime Logged { get; set; }
+
+        public string Level { get; set; } = null!;
+
+        public string Message { get; set; } = null!;
+
         public string? Logger { get; set; }
-        [MaxLength(255)]
-        public string? Url { get; set; }
+
+        public string? Callsite { get; set; }
+
+        public string? Exception { get; set; }
 
     }
 }

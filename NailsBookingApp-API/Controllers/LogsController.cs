@@ -18,7 +18,11 @@ namespace NailsBookingApp_API.Controllers
         [HttpDelete]
         public async Task<ActionResult<ApiResponse>> ClearLogs()
         {
-            return null;
+            var logs = _dbContext.Logs;
+            _dbContext.RemoveRange(logs);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Removed");
         }
     }
 }
