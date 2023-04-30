@@ -38,6 +38,30 @@ namespace NailsBookingApp_API
                 entity.Property(e => e.Logger).HasMaxLength(250);
                 entity.Property(e => e.MachineName).HasMaxLength(50);
             });
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.ApplicationUser)
+                .WithMany()
+                .HasForeignKey(c => c.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Like>()
+                .HasOne(l => l.ApplicationUser)
+                .WithMany()
+                .HasForeignKey(l => l.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Like>()
+                .HasOne(l => l.Post)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Like>()
+                .HasOne(l => l.Comment)
+                .WithMany(c => c.Likes)
+                .HasForeignKey(l => l.CommentId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

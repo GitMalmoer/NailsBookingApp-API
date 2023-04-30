@@ -13,11 +13,11 @@ namespace NailsBookingApp_API.Controllers
     {
         private readonly AppDbContext _dbContext;
         private readonly IEmailService _emailService;
-        private readonly ILogger _logger;
+        private readonly ILogger<EmailMessageController> _logger;
         private ApiResponse _apiResponse;
 
 
-        public EmailMessageController(AppDbContext dbContext, IEmailService emailService, ILogger logger)
+        public EmailMessageController(AppDbContext dbContext, IEmailService emailService, ILogger<EmailMessageController> logger)
         {
             _dbContext = dbContext;
             _emailService = emailService;

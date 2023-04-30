@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NailsBookingApp_API.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 using NailsBookingApp_API.Data;
 using NailsBookingApp_API.Middleware;
 using NailsBookingApp_API.Services;
@@ -29,7 +30,8 @@ namespace NailsBookingApp_API
 
                 // Add services to the container.
 
-                builder.Services.AddControllers();
+                builder.Services.AddControllers().AddJsonOptions(x =>
+                    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 
                 builder.Services.AddTransient<ErrorHandlingMiddleware>();
@@ -142,6 +144,14 @@ namespace NailsBookingApp_API
 
                 app.UseHttpsRedirection();
 
+                app.UseCors(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+
+                app.UseAuthentication();
                 app.UseAuthorization();
 
                 app.UseMiddleware<ErrorHandlingMiddleware>();

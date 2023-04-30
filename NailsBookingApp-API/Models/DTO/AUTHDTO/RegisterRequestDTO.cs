@@ -9,9 +9,13 @@ namespace NailsBookingApp_API.Models.DTO.AUTHDTO
         public string Email { get; set; }
 
         [Required]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Only letters are allowed in the name field.")]
+        [MaxLength(15,ErrorMessage = "Maximum length of name is 15 letters")]
         public string Name { get; set; }
 
         [Required]
+        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Only letters are allowed in the last name field.")]
+        [MaxLength(15, ErrorMessage = "Maximum length of last name is 15 letters")]
         public string LastName { get; set; }
 
         [Required]

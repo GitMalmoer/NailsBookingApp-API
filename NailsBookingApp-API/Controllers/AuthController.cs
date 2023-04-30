@@ -145,12 +145,12 @@ namespace NailsBookingApp_API.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim("id", user.Id),
-                        new Claim(ClaimTypes.Name, user.Name),
+                        new Claim("Id", user.Id),
+                        new Claim("Name", user.Name),
                         new Claim("LastName", user.LastName),
-                        new Claim(ClaimTypes.Email, loginRequestDto.UserName),
+                        new Claim("Email", loginRequestDto.UserName),
                         new Claim("ConfirmedEmail", user.EmailConfirmed.ToString()),
-                        new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
+                        new Claim("Role", roles.FirstOrDefault()),
                     }),
                     Expires = DateTime.Now.AddDays(30),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

@@ -8,16 +8,16 @@ namespace NailsBookingApp_API.Models.POSTS
         [Key]
         public int Id { get; set; }
 
-        //[ForeignKey("Post")]
+        [ForeignKey("PostId")]
         public virtual Post? Post { get; set; }
         public int? PostId { get; set; }
 
         public virtual Comment? Comment { get; set; }
         public int? CommentId { get; set; }
 
+        [ForeignKey("ApplicationUserId")]
         public virtual ApplicationUser ApplicationUser { get; set; }
-        //[ForeignKey("ApplicationUser")]
-        public Guid UserId { get; set; }
+        public string ApplicationUserId { get; set; }
 
     }
 }
