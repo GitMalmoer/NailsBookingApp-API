@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -262,11 +263,53 @@ namespace NailsBookingApp_API.Controllers
         [HttpDelete("DeletePost")]
         public async Task<ActionResult<ApiResponse>> DeletePost([FromBody] DeletePostDTO deletePostDto)
         {
-            var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.Id == deletePostDto.PostId);
+            // get the value from bearer 
+            //var userId = User.FindFirst("Id")?.Value;
+
+            var post = await _dbContext
+                .Posts
+                .Include(x => x.Comments).ThenInclude(x => x.Likes)
+                .FirstOrDefaultAsync(p => p.Id == deletePostDto.PostId);
+            
 
             if (post != null && post.ApplicationUserId == deletePostDto.ApplicationUserId )
             {
+                var comments = await _dbContext.Comments.FirstOrDefaultAsync(x => x.PostId == deletePostDto.PostId);
+
+                if (comments != null && comments.Likes != null && comments.Likes.Count > 0)
+                {
+                    _dbContext.Likes.RemoveRange(comments.Likes);
+                }
+
                 _dbContext.Posts.Remove(post);
+                await _dbContext.SaveChangesAsync();
+
+                _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+                return Ok(_apiResponse);
+            }
+            _apiResponse.HttpStatusCode = HttpStatusCode.NotFound;
+            _apiResponse.IsSuccess = false;
+            return NotFound(_apiResponse);
+        }
+
+        [HttpDelete("DeleteComment")]
+        public async Task<ActionResult<ApiResponse>> DeleteComment([FromBody] DeleteCommentDTO deleteCommentDto)
+        {
+            //var userId = User.FindFirst("Id")?.Value;
+
+            var comment = await _dbContext
+                .Comments
+                .Include(x => x.Likes)
+                .FirstOrDefaultAsync(c => c.Id == deleteCommentDto.CommentId);
+
+
+            if (comment != null && comment.ApplicationUserId == deleteCommentDto.ApplicationUserId)
+            {
+                //var commentLikes = await _dbContext.Comments.FirstOrDefaultAsync(x => x.PostId == deletePostDto.PostId);
+                //_dbContext.Likes.RemoveRange(commentLikes.Likes);
+
+                _dbContext.Comments.Remove(comment);
                 await _dbContext.SaveChangesAsync();
 
                 _apiResponse.HttpStatusCode = HttpStatusCode.OK;

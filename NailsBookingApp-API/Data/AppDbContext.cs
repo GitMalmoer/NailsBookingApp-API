@@ -61,7 +61,21 @@ namespace NailsBookingApp_API
                 .HasOne(l => l.Comment)
                 .WithMany(c => c.Likes)
                 .HasForeignKey(l => l.CommentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Post>()
+                .HasMany(p => p.Likes)
+                .WithOne(l => l.Post)
+                .HasForeignKey(l => l.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            //builder.Entity<Comment>()
+            //    .HasMany(x => x.Likes)
+            //    .WithOne(l => l.Comment)
+            //    .HasForeignKey(l => l.CommentId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+
         }
     }
 }
