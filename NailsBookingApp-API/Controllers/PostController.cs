@@ -321,5 +321,66 @@ namespace NailsBookingApp_API.Controllers
             return NotFound(_apiResponse);
         }
 
+        [HttpPut("updatePost")]
+        public async Task<ActionResult<ApiResponse>> UpdatePost([FromBody] UpdatePostDTO updatePostDto)
+        {
+            var post = await _dbContext.Posts.FindAsync(updatePostDto.PostId);
+
+            if (post == null || post.ApplicationUserId != updatePostDto.ApplicationUserId)
+            {
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Post not found or you are trying to update not your own post.");
+                return BadRequest();
+            }
+
+            if (string.IsNullOrEmpty(updatePostDto.Content))
+            {
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Content cannot be empty");
+                return BadRequest();
+            }
+
+            post.Content = updatePostDto.Content;
+            _dbContext.Update(post);
+            await _dbContext.SaveChangesAsync();
+
+            _apiResponse.IsSuccess = true;
+            _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+            return Ok(_apiResponse);
+        }
+
+        [HttpPut("updateComment")]
+        public async Task<ActionResult<ApiResponse>> UpdateComment([FromBody] UpdateCommentDTO updateCommentDto)
+        {
+            var comment = await _dbContext.Comments.FindAsync(updateCommentDto.CommentId);
+
+            if (comment == null || comment.ApplicationUserId != updateCommentDto.ApplicationUserId)
+            {
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Comment not found or you are trying to update not your own comment.");
+                return BadRequest();
+            }
+
+            if (string.IsNullOrEmpty(updateCommentDto.CommentContent))
+            {
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Content cannot be empty");
+                return BadRequest();
+            }
+
+            comment.CommentContent = updateCommentDto.CommentContent;
+            _dbContext.Comments.Update(comment);
+            await _dbContext.SaveChangesAsync();
+
+            _apiResponse.IsSuccess = true;
+            _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+            return Ok(_apiResponse);
+        }
+
     }
+   
 }
