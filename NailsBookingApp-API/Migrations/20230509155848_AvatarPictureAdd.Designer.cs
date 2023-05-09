@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NailsBookingApp_API;
 
@@ -11,9 +12,11 @@ using NailsBookingApp_API;
 namespace NailsBookingApp_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230509155848_AvatarPictureAdd")]
+    partial class AvatarPictureAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,7 +249,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AvatarPictures", (string)null);
+                    b.ToTable("AvatarPictures");
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.EmailQuestion", b =>
@@ -271,7 +274,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmailQuestions", (string)null);
+                    b.ToTable("EmailQuestions");
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.LOGGING.Log", b =>
@@ -343,7 +346,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.POSTS.Like", b =>
@@ -372,7 +375,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.POSTS.Post", b =>
@@ -398,7 +401,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.ApplicationUser", b =>

@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Collections;
+using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NailsBookingApp_API.Models;
+using NailsBookingApp_API.Services;
 using NailsBookingApp_API.Utility;
 
 namespace NailsBookingApp_API.Data
@@ -56,6 +59,25 @@ namespace NailsBookingApp_API.Data
                     };
                     await _userManager.CreateAsync(newUser, "admin");
                     await _userManager.AddToRoleAsync(newUser, SD.Role_Admin);
+                }
+
+            }
+        }
+
+        public static async Task SeedAvatarPictures(IApplicationBuilder applicationBuilder)
+        {
+            using (var scope = applicationBuilder.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<AppDbContext>();
+                var blobService = scope.ServiceProvider.GetService<IBlobService>();
+
+
+                if (!context.AvatarPictures.Any())
+                {
+                    IEnumerable<AvatarPicture> avatars = await blobService.ListAvatars(SD.blobContainerName);
+
+                    await context.AddRangeAsync(avatars);
+                    await context.SaveChangesAsync();
                 }
 
             }

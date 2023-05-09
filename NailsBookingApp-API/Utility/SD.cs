@@ -16,6 +16,8 @@
         public const string status_Completed = "Completed";
         public const string status_Cancelled = "Cancelled";
 
+        public const string blobContainerName = "nagel-store";
+
         public const string error = "All sections executed, unidentified error, contact server admin";
     }
 }

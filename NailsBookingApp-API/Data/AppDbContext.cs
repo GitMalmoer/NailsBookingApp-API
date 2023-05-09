@@ -14,19 +14,19 @@ namespace NailsBookingApp_API
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
-
-        public DbSet<ApplicationUser> ApplicationUsers {get; set;}
-        public DbSet<EmailQuestion> EmailQuestions { get; set;}
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<EmailQuestion> EmailQuestions { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
 
         public DbSet<Like> Likes { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<AvatarPicture> AvatarPictures { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+
             builder.Entity<Log>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("PK_dbo.Log");
@@ -74,6 +74,15 @@ namespace NailsBookingApp_API
             //    .WithOne(l => l.Comment)
             //    .HasForeignKey(l => l.CommentId)
             //    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ApplicationUser>()
+                .HasOne<AvatarPicture>()
+                .WithMany()
+                .HasForeignKey(x => x.AvatarPictureId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // DEFAULT VALUE - ID 8 TARGETS UNKNOWN PROFILE PICTURE IN DATABASE
+            builder.Entity<ApplicationUser>().Property(x => x.AvatarPictureId).HasDefaultValue(8);
 
 
         }
