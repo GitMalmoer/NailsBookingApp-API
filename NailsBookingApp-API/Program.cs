@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using NailsBookingApp_API.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Azure.Storage.Blobs;
 using NailsBookingApp_API.Data;
 using NailsBookingApp_API.Middleware;
 using NailsBookingApp_API.Services;
@@ -41,6 +42,11 @@ namespace NailsBookingApp_API
                 {
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
                 });
+
+                // BLOB SERVICE
+                builder.Services.AddSingleton(b =>
+                    new BlobServiceClient(builder.Configuration.GetConnectionString("StorageAccount")));
+                builder.Services.AddSingleton<IBlobService, BlobService>();
 
 
                 // ADDING SERVICE OF IDENTITY

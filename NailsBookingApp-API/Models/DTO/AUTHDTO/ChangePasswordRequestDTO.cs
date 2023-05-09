@@ -5,7 +5,6 @@ namespace NailsBookingApp_API.Models.DTO.AUTHDTO
     public class ChangePasswordRequestDTO
     {
         //EITHER REMOVE THIS OR USE THIS IN FRONTEND BY DECODING JWT
-        [EmailAddress]
         [Required]
         public string email { get; set; }
 

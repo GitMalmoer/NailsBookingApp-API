@@ -15,6 +15,8 @@ using NailsBookingApp_API.Services;
 using Stripe;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Utilities.Encoders;
 
 namespace NailsBookingApp_API.Controllers
 {
@@ -84,8 +86,13 @@ namespace NailsBookingApp_API.Controllers
                     //GENERATE EMAIL CONFIRMATION TOKEN
                     var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-                    var confirmationLink = Url.Action("ConfirmEmail", "Auth",
-                        new { UserId = newUser.Id, Token = emailConfirmationToken }, Request.Scheme);
+                    //var confirmationLink = Url.Action("ConfirmEmail", "Auth",
+                    //  new { UserId = newUser.Id, Token = emailConfirmationToken }, Request.Scheme);
+
+                    var token = Base64UrlEncoder.Encode(emailConfirmationToken);
+                    var userEncoded = Base64UrlEncoder.Encode(newUser.Id);
+
+                    var confirmationLink = $"http://localhost:3000/confirmemail/?token={token}&user={userEncoded}";
 
                     _apiResponse.Result = confirmationLink; // TEST REMOVE
 
@@ -246,11 +253,15 @@ namespace NailsBookingApp_API.Controllers
             return NotFound(_apiResponse);
 
         }
-
-        [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string userid, string token)
+        /// <summary>
+        /// The token and user has been decoded by register action and is decoded on the go in the confirmEmail action
+        /// </summary>
+        /// <param name="confirmEmailDto"></param>
+        /// <returns></returns>
+        [HttpPost("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailDTO confirmEmailDto)
         {
-            if (string.IsNullOrEmpty(userid) || string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(confirmEmailDto.userId) || string.IsNullOrEmpty(confirmEmailDto.token))
             {
                 _apiResponse.IsSuccess = false;
                 _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
@@ -258,7 +269,8 @@ namespace NailsBookingApp_API.Controllers
                 return NotFound(_apiResponse);
             }
 
-            var userFromDb = await _userManager.FindByIdAsync(userid);
+            string decodedUserId = Base64UrlEncoder.Decode(confirmEmailDto.userId);
+            var userFromDb = await _userManager.FindByIdAsync(decodedUserId);
 
             if (userFromDb == null)
             {
@@ -276,7 +288,8 @@ namespace NailsBookingApp_API.Controllers
                 return BadRequest(_apiResponse);
             }
 
-            var result = await _userManager.ConfirmEmailAsync(userFromDb, token);
+            string decodedToken = Base64UrlEncoder.Decode(confirmEmailDto.token);
+            var result = await _userManager.ConfirmEmailAsync(userFromDb, decodedToken);
 
             if (result.Succeeded)
             {
