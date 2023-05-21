@@ -140,6 +140,7 @@ namespace NailsBookingApp_API
                 builder.Host.UseNLog();
 
                 var app = builder.Build();
+                app.UseSwagger();
 
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
@@ -153,7 +154,6 @@ namespace NailsBookingApp_API
                         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
                         c.RoutePrefix = string.Empty;
                     });
-
                 }
 
                 app.UseHttpsRedirection();
