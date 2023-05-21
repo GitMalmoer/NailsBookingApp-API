@@ -75,11 +75,11 @@ namespace NailsBookingApp_API
             //    .HasForeignKey(l => l.CommentId)
             //    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<ApplicationUser>()
-                .HasOne<AvatarPicture>()
-                .WithMany()
-                .HasForeignKey(x => x.AvatarPictureId)
-                .OnDelete(DeleteBehavior.NoAction);
+            //builder.Entity<ApplicationUser>()
+            //    .HasOne<AvatarPicture>()
+            //    .WithMany()
+            //    .HasForeignKey(x => x.AvatarPictureId)
+            //    .OnDelete(DeleteBehavior.NoAction);
 
             // DEFAULT VALUE - ID 8 TARGETS UNKNOWN PROFILE PICTURE IN DATABASE
             builder.Entity<ApplicationUser>().Property(x => x.AvatarPictureId).HasDefaultValue(8);

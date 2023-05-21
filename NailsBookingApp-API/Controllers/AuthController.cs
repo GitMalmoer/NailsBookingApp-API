@@ -15,6 +15,7 @@ using NailsBookingApp_API.Services;
 using Stripe;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Utilities.Encoders;
 
@@ -159,7 +160,7 @@ namespace NailsBookingApp_API.Controllers
                         new Claim("LastName", user.LastName),
                         new Claim("Email", loginRequestDto.UserName),
                         new Claim("ConfirmedEmail", user.EmailConfirmed.ToString()),
-                        new Claim("Role", roles.FirstOrDefault()),
+                        new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
                     }),
                     Expires = DateTime.Now.AddDays(30),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -352,7 +353,7 @@ namespace NailsBookingApp_API.Controllers
 
                 _apiResponse.HttpStatusCode = HttpStatusCode.OK;
                 _apiResponse.IsSuccess = true;
-                _apiResponse.Result = passwordResetLink;
+                //_apiResponse.Result = passwordResetLink; just for test purposes
                 return Ok(_apiResponse);
             }
 
@@ -434,7 +435,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse.ErrorMessages.Add("You provided not valid data");
             return BadRequest(_apiResponse);
         }
-
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpGet("GetUsers")]
         public async Task<ActionResult> GetUsers()
         {
@@ -460,6 +461,73 @@ namespace NailsBookingApp_API.Controllers
             return BadRequest(_apiResponse);
         }
 
+        [HttpPost("profile/ChangeProfilePic")]
+        public async Task<ActionResult<ApiResponse>> ChangeProfilePic(ChangeProfilePictureDTO changeProfilePicDto)
+        {
+            var user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == changeProfilePicDto.UserId);
+            var profilePic =
+                await _dbContext.AvatarPictures.FirstOrDefaultAsync(x => x.Id == changeProfilePicDto.AvatarId);
+
+            if (user == null || profilePic == null)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.ErrorMessages.Add("User not found or Avatar not found");
+                return BadRequest(_apiResponse);
+            }
+
+            user.AvatarPictureId = changeProfilePicDto.AvatarId;
+            _dbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+            _apiResponse.IsSuccess = true;
+            _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+            return Ok(_apiResponse);
+        }
+
+        [HttpGet("profile/getProfilePic/{userId}")]
+        public async Task<ActionResult<ApiResponse>> GetProfilePic(string userId)
+        {
+            var user = await _dbContext.ApplicationUsers
+                .Include(x => x.AvatarPicture)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+
+            if (user == null )
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.ErrorMessages.Add("User not found or Avatar not found");
+                return BadRequest(_apiResponse);
+            }
+            else
+            {
+                _apiResponse.IsSuccess = true;
+                _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+                _apiResponse.Result = user.AvatarPicture.Path;
+                return Ok(_apiResponse);
+            }
+        }
+
+        [HttpGet("profile/getAllAvatars")]
+        public async Task<ActionResult<ApiResponse>> GetAllAvatars()
+        {
+            var avatars = _dbContext.AvatarPictures;
+
+            if (avatars == null)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.ErrorMessages.Add("User not found or Avatar not found");
+                return BadRequest(_apiResponse);
+            }
+            else
+            {
+                _apiResponse.IsSuccess = true;
+                _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+                _apiResponse.Result = avatars;
+                return Ok(_apiResponse);
+            }
+        }
     }
 
 }

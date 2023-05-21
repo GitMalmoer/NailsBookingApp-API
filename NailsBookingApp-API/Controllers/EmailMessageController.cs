@@ -1,9 +1,11 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NailsBookingApp_API.Models;
 using NailsBookingApp_API.Models.DTO;
 using NailsBookingApp_API.Services;
+using NailsBookingApp_API.Utility;
 
 namespace NailsBookingApp_API.Controllers
 {
@@ -50,7 +52,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse.HttpStatusCode = HttpStatusCode.OK;
             return Ok(_apiResponse);
         }
-
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpGet("GetMessages")]
         public async Task<ActionResult<ApiResponse>> GetMessages()
         {

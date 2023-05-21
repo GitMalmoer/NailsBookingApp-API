@@ -11,10 +11,9 @@ namespace NailsBookingApp_API.Models
         public string? PassResetToken { get; set; }
         public DateTime? PassResetExpirationDate { get; set; }
         public DateTime? AccountCreateDate { get; set; }
-
-        [ForeignKey("AvatarPictureId")]
-        public virtual AvatarPicture AvatarPicture { get; set; }
-        public int AvatarPictureId { get; set; }
+        
+        public virtual AvatarPicture? AvatarPicture { get; set; }
+        public int? AvatarPictureId { get; set; }
 
         public ApplicationUser()
         {

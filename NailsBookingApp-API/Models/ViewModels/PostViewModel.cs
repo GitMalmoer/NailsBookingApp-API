@@ -11,6 +11,7 @@ namespace NailsBookingApp_API.Models.ViewModels
         public string ApplicationUserId { get; set; }
         public string ApplicationUserName{ get; set; }
         public string ApplicationUserLastName{ get; set; }
+        public string ApplicationUserAvatarUri { get; set; }
 
         public DateTime CreateDateTime { get; set; }
 

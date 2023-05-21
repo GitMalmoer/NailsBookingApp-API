@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace NailsBookingApp_API.Controllers
 {
     [Route("api/post")]
     [ApiController]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
@@ -80,7 +82,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse.IsSuccess = true;
             return Ok(_apiResponse);
         }
-
+        [AllowAnonymous]
         [HttpGet("GetPosts")]
         public async Task<ActionResult<ApiResponse>> GetPosts()
         {
@@ -100,6 +102,7 @@ namespace NailsBookingApp_API.Controllers
                     ApplicationUserId = x.ApplicationUserId,
                     ApplicationUserName = x.ApplicationUser.Name,
                     ApplicationUserLastName = x.ApplicationUser.LastName,
+                    ApplicationUserAvatarUri = x.ApplicationUser.AvatarPicture.Path,
                 })
                 .ToListAsync();
 
@@ -228,6 +231,7 @@ namespace NailsBookingApp_API.Controllers
             return BadRequest(_apiResponse);
         }
 
+        [AllowAnonymous]
         [HttpGet("GetCommentsById/{id:int}")]
         public async Task<ActionResult<ApiResponse>> GetCommentsById(int id)
         {
@@ -241,6 +245,7 @@ namespace NailsBookingApp_API.Controllers
                     ApplicationUserName = x.ApplicationUser.Name,
                     ApplicationUserLastName = x.ApplicationUser.LastName,
                     ApplicationUserId = x.ApplicationUserId,
+                    ApplicationUserAvatarUri = x.ApplicationUser.AvatarPicture.Path,
                     CreateDateTime = x.CreateDateTime,
                     PostId = x.PostId,
                     Likes = x.Likes,

@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NailsBookingApp_API.Models;
+using NailsBookingApp_API.Utility;
 
 namespace NailsBookingApp_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = SD.Role_Admin)]
     public class LogsController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
@@ -30,6 +33,9 @@ namespace NailsBookingApp_API.Controllers
         [HttpGet("GetErrorLogs")]
         public async Task<ActionResult<ApiResponse>> GetErrorLogs()
         {
+
+            //var userId = User.FindFirst("Id")?.Value;
+
             var logs = _dbContext.Logs.Where(l => l.Level == "error");
             _apiResponse.IsSuccess = true;
             _apiResponse.Result = logs;
