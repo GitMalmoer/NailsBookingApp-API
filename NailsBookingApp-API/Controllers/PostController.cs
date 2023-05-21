@@ -108,10 +108,11 @@ namespace NailsBookingApp_API.Controllers
 
             if (posts == null || !posts.Any())
             {
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.HttpStatusCode = HttpStatusCode.NoContent;
                 _apiResponse.IsSuccess = false;
                 _apiResponse.ErrorMessages.Add("There are no posts");
-                return BadRequest();
+                _apiResponse.Result = posts;
+                return NoContent();
             }
 
             _apiResponse.HttpStatusCode = HttpStatusCode.OK;

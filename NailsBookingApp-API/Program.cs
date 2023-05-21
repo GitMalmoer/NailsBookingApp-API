@@ -166,8 +166,8 @@ namespace NailsBookingApp_API
                 app.MapControllers();
 
                 // APP DB SEEDER
-                AppDbInitializer.SeedRolesAndUsers(app).Wait();
                 AppDbInitializer.SeedAvatarPictures(app).Wait();
+                AppDbInitializer.SeedRolesAndUsers(app).Wait();
 
                 app.Run();
 

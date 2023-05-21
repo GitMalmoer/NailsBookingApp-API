@@ -10,6 +10,25 @@ namespace NailsBookingApp_API.Data
 {
     public static class AppDbInitializer
     {
+        public static async Task SeedAvatarPictures(IApplicationBuilder applicationBuilder)
+        {
+            using (var scope = applicationBuilder.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<AppDbContext>();
+                var blobService = scope.ServiceProvider.GetService<IBlobService>();
+
+
+                if (!context.AvatarPictures.Any())
+                {
+                    IEnumerable<AvatarPicture> avatars = await blobService.ListAvatars(SD.blobContainerName);
+
+                    await context.AddRangeAsync(avatars);
+                    await context.SaveChangesAsync();
+                }
+
+            }
+        }
+
         public static async Task SeedRolesAndUsers(IApplicationBuilder applicationBuilder)
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
@@ -55,7 +74,7 @@ namespace NailsBookingApp_API.Data
                         UserName = SD.Role_Admin,
                         Email = SD.Role_Admin,
                         EmailConfirmed = true,
-
+                        AvatarPictureId = 8,
                     };
                     await _userManager.CreateAsync(newUser, "admin");
                     await _userManager.AddToRoleAsync(newUser, SD.Role_Admin);
@@ -64,23 +83,6 @@ namespace NailsBookingApp_API.Data
             }
         }
 
-        public static async Task SeedAvatarPictures(IApplicationBuilder applicationBuilder)
-        {
-            using (var scope = applicationBuilder.ApplicationServices.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetService<AppDbContext>();
-                var blobService = scope.ServiceProvider.GetService<IBlobService>();
-
-
-                if (!context.AvatarPictures.Any())
-                {
-                    IEnumerable<AvatarPicture> avatars = await blobService.ListAvatars(SD.blobContainerName);
-
-                    await context.AddRangeAsync(avatars);
-                    await context.SaveChangesAsync();
-                }
-
-            }
-        }
+    
     }
 }
