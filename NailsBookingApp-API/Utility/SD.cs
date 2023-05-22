@@ -17,6 +17,7 @@
         public const string status_Cancelled = "Cancelled";
 
         public const string blobContainerName = "nailscontainer";
+        public const string actualWebsite = "https://nailsbookingapp.netlify.app";
 
         public const string error = "All sections executed, unidentified error, contact server admin";
     }

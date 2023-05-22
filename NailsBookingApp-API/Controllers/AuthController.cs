@@ -93,7 +93,7 @@ namespace NailsBookingApp_API.Controllers
                     var token = Base64UrlEncoder.Encode(emailConfirmationToken);
                     var userEncoded = Base64UrlEncoder.Encode(newUser.Id);
 
-                    var confirmationLink = $"http://localhost:3000/confirmemail/?token={token}&user={userEncoded}";
+                    var confirmationLink = $"{SD.actualWebsite}/confirmemail/?token={token}&user={userEncoded}";
 
                     _apiResponse.Result = confirmationLink; // TEST REMOVE
 
@@ -346,7 +346,7 @@ namespace NailsBookingApp_API.Controllers
                 //var passwordResetLink = Url.Action("ResetPassword", "Auth",
                 //    new { Email = forgotPasswordDto.Email, Token = token }, Request.Scheme);
 
-                var passwordResetLink = "http://localhost:3000/resetpassword/token/?token=" + token;
+                var passwordResetLink = $"{SD.actualWebsite}/resetpassword/token/?token=" + token;
 
                 // SENDING PASSWORD RESET LINK USING SMTP
                 await _emailService.SendPasswordResetLink(passwordResetLink, userFromDb.Email);
