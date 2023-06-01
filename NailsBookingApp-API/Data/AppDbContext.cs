@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NailsBookingApp_API.Models;
 using NailsBookingApp_API.Models.LOGGING;
 using System.Reflection.Emit;
+using NailsBookingApp_API.Models.BOOKING;
 using NailsBookingApp_API.Models.POSTS;
 
 namespace NailsBookingApp_API
@@ -22,6 +23,7 @@ namespace NailsBookingApp_API
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<AvatarPicture> AvatarPictures { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
