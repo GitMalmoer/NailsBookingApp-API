@@ -246,7 +246,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AvatarPictures");
+                    b.ToTable("AvatarPictures", (string)null);
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.BOOKING.Appointment", b =>
@@ -288,7 +288,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.EmailQuestion", b =>
@@ -313,7 +313,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmailQuestions");
+                    b.ToTable("EmailQuestions", (string)null);
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.LOGGING.Log", b =>
@@ -385,7 +385,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.POSTS.Like", b =>
@@ -414,7 +414,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Likes", (string)null);
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.POSTS.Post", b =>
@@ -440,7 +440,7 @@ namespace NailsBookingApp_API.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("NailsBookingApp_API.Models.ApplicationUser", b =>

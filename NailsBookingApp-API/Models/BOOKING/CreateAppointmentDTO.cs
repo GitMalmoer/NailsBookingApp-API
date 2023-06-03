@@ -13,12 +13,11 @@ namespace NailsBookingApp_API.Models.BOOKING
         [Required]
         public string Phone { get; set; }
         [Required]
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         [Required]
         public string Time { get; set; }
         [Required]
         public int ServiceValue { get; set; }
-        [Required]
-        public double Price { get; set; }
+        public double? Price { get; set; }
     }
 }
