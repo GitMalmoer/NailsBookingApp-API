@@ -10,6 +10,7 @@
             { 4, 350 },
             { 5, 350 },
             { 6, 100 },
+            {7,200}
         };
         public static double GetPriceByService(int serviceValue)
         {
