@@ -26,7 +26,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse = new ApiResponse();
         }
 
-        [HttpPost("CreatePost")]
+        [HttpPost("createPost")]
         public async Task<ActionResult<ApiResponse>> CreatePost([FromBody] PostDTO postDto)
         {
             var userFromDb = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == postDto.ApplicationUserId);
@@ -54,7 +54,7 @@ namespace NailsBookingApp_API.Controllers
 
         }
 
-        [HttpPost("AddComment")]
+        [HttpPost("addComment")]
         public async Task<ActionResult<ApiResponse>> AddComment([FromBody] CommentDTO commentDTO)
         {
             var userFromDb = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == commentDTO.ApplicationUserId);
@@ -83,10 +83,9 @@ namespace NailsBookingApp_API.Controllers
             return Ok(_apiResponse);
         }
         [AllowAnonymous]
-        [HttpGet("GetPosts")]
+        [HttpGet("getPosts")]
         public async Task<ActionResult<ApiResponse>> GetPosts()
         {
-
             // MAYBE WE WILL NEED TO REMOVE INCLUDES JUST FOR OPTIMALIZATION 
             var posts = await _dbContext
                 .Posts
@@ -123,7 +122,7 @@ namespace NailsBookingApp_API.Controllers
       
         }
 
-        [HttpGet("GetPostById")]
+        [HttpGet("getPostById")]
         public async Task<ActionResult<ApiResponse>> GetPost(int id)
         {
             var post = await _dbContext
@@ -148,7 +147,7 @@ namespace NailsBookingApp_API.Controllers
         }
 
 
-        [HttpPost("HandleLike")]
+        [HttpPost("handleLike")]
         public async Task<ActionResult<ApiResponse>> HandleLike([FromBody] LikeDTO likeDto)
         {
             var userFromDb = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == likeDto.ApplicationUserId);
@@ -233,7 +232,7 @@ namespace NailsBookingApp_API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("GetCommentsById/{id:int}")]
+        [HttpGet("getCommentsById/{id:int}")]
         public async Task<ActionResult<ApiResponse>> GetCommentsById(int id)
         {
             var comments = _dbContext
@@ -266,7 +265,7 @@ namespace NailsBookingApp_API.Controllers
             return NotFound(_apiResponse);
         }
 
-        [HttpDelete("DeletePost")]
+        [HttpDelete("deletePost")]
         public async Task<ActionResult<ApiResponse>> DeletePost([FromBody] DeletePostDTO deletePostDto)
         {
             // get the value from bearer 
@@ -299,7 +298,7 @@ namespace NailsBookingApp_API.Controllers
             return NotFound(_apiResponse);
         }
 
-        [HttpDelete("DeleteComment")]
+        [HttpDelete("deleteComment")]
         public async Task<ActionResult<ApiResponse>> DeleteComment([FromBody] DeleteCommentDTO deleteCommentDto)
         {
             //var userId = User.FindFirst("Id")?.Value;

@@ -21,7 +21,7 @@ using Org.BouncyCastle.Utilities.Encoders;
 
 namespace NailsBookingApp_API.Controllers
 {
-    [Route("Api/Auth")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace NailsBookingApp_API.Controllers
 
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequestDTO registerRequestDto)
         {
 
@@ -121,7 +121,7 @@ namespace NailsBookingApp_API.Controllers
             return BadRequest(_apiResponse);
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequestDTO loginRequestDto)
         {
             ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == loginRequestDto.UserName);
@@ -197,7 +197,7 @@ namespace NailsBookingApp_API.Controllers
             }
         }
 
-        [HttpPost("ChangePassword")]
+        [HttpPost("changePassword")]
         public async Task<ActionResult<ApiResponse>> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
         {
             if (!ModelState.IsValid)
@@ -259,7 +259,7 @@ namespace NailsBookingApp_API.Controllers
         /// </summary>
         /// <param name="confirmEmailDto"></param>
         /// <returns></returns>
-        [HttpPost("ConfirmEmail")]
+        [HttpPost("confirmEmail")]
         public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailDTO confirmEmailDto)
         {
             if (string.IsNullOrEmpty(confirmEmailDto.userId) || string.IsNullOrEmpty(confirmEmailDto.token))
@@ -307,7 +307,7 @@ namespace NailsBookingApp_API.Controllers
             }
         }
 
-        [HttpPost("ForgotPassword")]
+        [HttpPost("forgotPassword")]
         public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDto)
         {
             if (string.IsNullOrEmpty(forgotPasswordDto.Email))
@@ -364,7 +364,7 @@ namespace NailsBookingApp_API.Controllers
 
         }
 
-        [HttpGet("ResetPassword")]
+        [HttpGet("resetPassword")]
         public async Task<ActionResult<ApiResponse>> ResetPassword(string token, string email)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
@@ -388,7 +388,7 @@ namespace NailsBookingApp_API.Controllers
         }
 
 
-        [HttpPost("ResetPassword")]
+        [HttpPost("resetPassword")]
         public async Task<ActionResult<ApiResponse>> ResetPassword(PasswordResetDTO passwordResetDto)
         {
             if (string.IsNullOrEmpty(passwordResetDto.email) || string.IsNullOrEmpty(passwordResetDto.token) || passwordResetDto == null)
@@ -436,7 +436,7 @@ namespace NailsBookingApp_API.Controllers
             return BadRequest(_apiResponse);
         }
         [Authorize(Roles = SD.Role_Admin)]
-        [HttpGet("GetUsers")]
+        [HttpGet("getUsers")]
         public async Task<ActionResult> GetUsers()
         {
             var users = _dbContext.ApplicationUsers.Select(u => new UserViewModel()
@@ -461,7 +461,7 @@ namespace NailsBookingApp_API.Controllers
             return BadRequest(_apiResponse);
         }
 
-        [HttpPost("profile/ChangeProfilePic")]
+        [HttpPost("profile/changeProfilePic")]
         public async Task<ActionResult<ApiResponse>> ChangeProfilePic(ChangeProfilePictureDTO changeProfilePicDto)
         {
             var user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == changeProfilePicDto.UserId);

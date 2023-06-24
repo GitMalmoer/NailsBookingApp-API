@@ -20,7 +20,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse = new ApiResponse();
         }
 
-        [HttpDelete("ClearLogs")]
+        [HttpDelete("clearLogs")]
         public async Task<ActionResult<ApiResponse>> ClearLogs()
         {
             var logs = _dbContext.Logs;
@@ -30,7 +30,7 @@ namespace NailsBookingApp_API.Controllers
             return Ok("Removed");
         }
 
-        [HttpGet("GetErrorLogs")]
+        [HttpGet("getErrorLogs")]
         public async Task<ActionResult<ApiResponse>> GetErrorLogs()
         {
 

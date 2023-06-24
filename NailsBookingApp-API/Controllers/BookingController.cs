@@ -24,7 +24,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse = new ApiResponse();
         }
 
-        [HttpGet("GetAvailableTimes")]
+        [HttpGet("getAvailableTimes")]
         public async Task<IActionResult> GetAvailableTimes(string stringDate)
         {
             bool isDateOk = DateTime.TryParse(stringDate, out DateTime selectedDate);
@@ -55,7 +55,7 @@ namespace NailsBookingApp_API.Controllers
            return Ok(_apiResponse);
         }
 
-        [HttpPost("CreateAppointment")]
+        [HttpPost("createAppointment")]
         public async Task<ActionResult<ApiResponse>> CreateAppointment([FromBody]CreateAppointmentDTO createAppointmentDto)
         {
             try
@@ -100,7 +100,7 @@ namespace NailsBookingApp_API.Controllers
             }
         }
 
-        [HttpPost("InitiatePayment")]
+        [HttpPost("initiatePayment")]
         public async Task<ActionResult<ApiResponse>> InitiatePayment([FromBody] CreateAppointmentDTO createAppointmentDto)
         {
             if (!ModelState.IsValid)

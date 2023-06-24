@@ -27,7 +27,7 @@ namespace NailsBookingApp_API.Controllers
             _apiResponse = new ApiResponse();
         }
 
-        [HttpPost("SendMessage")]
+        [HttpPost("sendMessage")]
         public async Task<ActionResult<ApiResponse>> AskQuestion([FromBody] EmailQuestionDTO emailQuestionDto)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,7 @@ namespace NailsBookingApp_API.Controllers
             return Ok(_apiResponse);
         }
         [Authorize(Roles = SD.Role_Admin)]
-        [HttpGet("GetMessages")]
+        [HttpGet("getMessages")]
         public async Task<ActionResult<ApiResponse>> GetMessages()
         {
             var emailMessages = _dbContext.EmailQuestions;
