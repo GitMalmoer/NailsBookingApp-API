@@ -11,6 +11,7 @@ using Azure.Storage.Blobs;
 using NailsBookingApp_API.Data;
 using NailsBookingApp_API.Middleware;
 using NailsBookingApp_API.Services;
+using NailsBookingApp_API.Services.AUTH;
 using NLog;
 using Stripe.BillingPortal;
 using NLog.Web;
@@ -36,6 +37,7 @@ namespace NailsBookingApp_API
 
 
                 builder.Services.AddTransient<ErrorHandlingMiddleware>();
+                builder.Services.AddScoped<IAuthService, AuthService>();
 
                 // SETTING UP CONNECTION WITH DB
                 builder.Services.AddDbContext<AppDbContext>(options =>

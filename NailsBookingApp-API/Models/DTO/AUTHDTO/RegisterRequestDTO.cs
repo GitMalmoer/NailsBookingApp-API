@@ -2,6 +2,9 @@
 
 namespace NailsBookingApp_API.Models.DTO.AUTHDTO
 {
+    /// <summary>
+    /// Normal register request through application
+    /// </summary>
     public class RegisterRequestDTO
     {
         [Required]

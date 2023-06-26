@@ -15,12 +15,15 @@ namespace NailsBookingApp_API.Models
         public virtual AvatarPicture? AvatarPicture { get; set; }
         public int? AvatarPictureId { get; set; }
 
+        public string? ExternalSubjectId { get; set; }
+
         public ApplicationUser()
         {
             AccountCreateDate = DateTime.Now;
             // the id of unknown user picture
             AvatarPictureId = 8;
         }
+
 
     }
 }

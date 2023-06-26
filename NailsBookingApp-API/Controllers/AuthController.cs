@@ -16,6 +16,7 @@ using Stripe;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
+using NailsBookingApp_API.Services.AUTH;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Utilities.Encoders;
 
@@ -29,15 +30,17 @@ namespace NailsBookingApp_API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailService _emailService;
+        private readonly IAuthService _authService;
         private ApiResponse _apiResponse;
         private string _secretKey;
 
-        public AuthController(AppDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IEmailService emailService)
+        public AuthController(AppDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IEmailService emailService, IAuthService authService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _authService = authService;
             _apiResponse = new ApiResponse();
             _secretKey = configuration.GetValue<string>("ApiSettings:Secret");
 
@@ -98,7 +101,7 @@ namespace NailsBookingApp_API.Controllers
                     _apiResponse.Result = confirmationLink; // TEST REMOVE
 
                     await _emailService.SendEmailVeryficationLink(confirmationLink, newUser.Email);
-                    
+
                     //ROLE IS CREATED IN APP DB INITIALIZER SEED METHOD
                     _apiResponse.IsSuccess = true;
                     //_apiResponse.Result = newUser; // JUST TEST REMOVE AFTER TESTING
@@ -124,7 +127,7 @@ namespace NailsBookingApp_API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequestDTO loginRequestDto)
         {
-            ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == loginRequestDto.UserName);
+            ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
             if (user == null)
             {
                 _apiResponse.IsSuccess = false;
@@ -197,6 +200,62 @@ namespace NailsBookingApp_API.Controllers
             }
         }
 
+        [HttpPost("loginWithGoogle")]
+        public async Task<ActionResult<ApiResponse>> LoginWithGoogle([FromBody] ExternalLoginRequestDTO externalLoginRequestDTO)
+        {
+            ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == externalLoginRequestDTO.Email.ToLower());
+            if (user == null)
+            {
+                ApplicationUser newUser = new ApplicationUser()
+                {
+                    UserName = externalLoginRequestDTO.Email,
+                    Email = externalLoginRequestDTO.Email,
+                    Name = externalLoginRequestDTO.FirstName,
+                    LastName = externalLoginRequestDTO.LastName,
+                    EmailConfirmed = externalLoginRequestDTO.EmailConfirmed,
+                    NormalizedEmail = externalLoginRequestDTO.Email.ToUpper(),
+                    ExternalSubjectId = externalLoginRequestDTO.ExternalSubjectId,
+                    AccountCreateDate = DateTime.Now,
+                };
+
+                var result = await _userManager.CreateAsync(newUser);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
+                    user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == externalLoginRequestDTO.Email.ToLower());
+
+                    string token = await _authService.GenerateJwt(user);
+                    if (token != null)
+                    {
+                        _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+                        _apiResponse.IsSuccess = true;
+                        _apiResponse.Result = token;
+                        return Ok(_apiResponse);
+                    }
+                }
+
+            }
+            else
+            {
+                if ((user.ExternalSubjectId != null && user.ExternalSubjectId.Length > 0) && user.ExternalSubjectId == externalLoginRequestDTO.ExternalSubjectId)
+                {
+                    var token = await _authService.GenerateJwt(user);
+                    if (token != null)
+                    {
+                        _apiResponse.HttpStatusCode = HttpStatusCode.OK;
+                        _apiResponse.IsSuccess = true;
+                        _apiResponse.Result = token;
+                        return Ok(_apiResponse);
+                    }
+                }
+            }
+
+            _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
+            _apiResponse.IsSuccess = false;
+            _apiResponse.ErrorMessages.Add("Error! Try Again");
+            return BadRequest(_apiResponse);
+        }
+
         [HttpPost("changePassword")]
         public async Task<ActionResult<ApiResponse>> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
         {
@@ -260,7 +319,7 @@ namespace NailsBookingApp_API.Controllers
         /// <param name="confirmEmailDto"></param>
         /// <returns></returns>
         [HttpPost("confirmEmail")]
-        public async Task<IActionResult> ConfirmEmail([FromBody]ConfirmEmailDTO confirmEmailDto)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDTO confirmEmailDto)
         {
             if (string.IsNullOrEmpty(confirmEmailDto.userId) || string.IsNullOrEmpty(confirmEmailDto.token))
             {
@@ -492,7 +551,7 @@ namespace NailsBookingApp_API.Controllers
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
 
-            if (user == null )
+            if (user == null)
             {
                 _apiResponse.IsSuccess = false;
                 _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
