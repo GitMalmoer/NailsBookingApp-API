@@ -247,6 +247,10 @@ namespace NailsBookingApp_API.Controllers
                         _apiResponse.Result = token;
                         return Ok(_apiResponse);
                     }
+                } 
+                else if (user.ExternalSubjectId == null)
+                {
+
                 }
             }
 
