@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /NailsBookingApp-API/AppDbContext.dgml
+/NailsBookingApp-API/appsettings.json
