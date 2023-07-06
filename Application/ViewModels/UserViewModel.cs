@@ -1,4 +1,4 @@
-﻿namespace Domain.Models.ViewModels
+﻿namespace Application.ViewModels
 {
     public class UserViewModel
     {

@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MediatR\Auth\Querries\" />
     <Folder Include="MediatR\Booking\" />
     <Folder Include="MediatR\EmailMessage\" />
     <Folder Include="MediatR\Logs\" />

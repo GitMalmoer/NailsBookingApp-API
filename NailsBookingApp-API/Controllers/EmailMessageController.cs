@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Application.DTO;
 using Domain.Models;
-using Domain.Models.DTO;
 using Domain.Utility;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;

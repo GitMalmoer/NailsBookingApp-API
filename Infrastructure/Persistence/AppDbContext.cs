@@ -11,20 +11,26 @@ using Domain.Models.POSTS;
 
 namespace Infrastructure.Persistence
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser> , IAppDbContext
+    public class AppDbContext : IdentityDbContext<IdentityUser>, IAppDbContext
     {
-        public AppDbContext(DbContextOptions options) : base(options)
-        {
-        }
+        public AppDbContext(DbContextOptions options) : base(options){}
+
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
         public DbSet<EmailQuestion> EmailQuestions { get; set; }
+
         public virtual DbSet<Log> Logs { get; set; }
 
         public DbSet<Like> Likes { get; set; }
+
         public DbSet<Post> Posts { get; set; }
+
         public DbSet<Comment> Comments { get; set; }
+
         public DbSet<AvatarPicture> AvatarPictures { get; set; }
+
         public DbSet<Appointment> Appointments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -72,6 +78,8 @@ namespace Infrastructure.Persistence
                 .HasForeignKey(l => l.PostId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+            // THERE ARE PROBLEMS WITH ON DELETE BEHAVIOUR NOT FIXED YET
             //builder.Entity<Comment>()
             //    .HasMany(x => x.Likes)
             //    .WithOne(l => l.Comment)
@@ -84,8 +92,8 @@ namespace Infrastructure.Persistence
             //    .HasForeignKey(x => x.AvatarPictureId)
             //    .OnDelete(DeleteBehavior.NoAction);
 
-            // DEFAULT VALUE - ID 8 TARGETS UNKNOWN PROFILE PICTURE IN DATABASE
-            builder.Entity<ApplicationUser>().Property(x => x.AvatarPictureId).HasDefaultValue(8);
+            int defaultPictureId = 8;
+            builder.Entity<ApplicationUser>().Property(x => x.AvatarPictureId).HasDefaultValue(defaultPictureId);
 
 
         }

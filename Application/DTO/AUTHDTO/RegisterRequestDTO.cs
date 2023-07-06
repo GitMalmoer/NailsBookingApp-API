@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Models.DTO.AUTHDTO
+namespace Application.DTO.AUTHDTO
 {
     /// <summary>
     /// Normal register request through application

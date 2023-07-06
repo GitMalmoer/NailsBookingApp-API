@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Models.DTO.POSTDTO
+namespace Application.DTO.POSTDTO
 {
-    public class PostDTO
+    public class DeletePostDTO
     {
         [Required] public string ApplicationUserId { get; set; }
-
-
-        [Required] public string Content { get; set; }
-
+        [Required] public int PostId { get; set; }
     }
 }

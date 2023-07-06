@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using System.Xml.Linq;
+using Application.DTO.POSTDTO;
+using Application.ViewModels;
 using Domain.Models;
-using Domain.Models.DTO.POSTDTO;
 using Domain.Models.POSTS;
-using Domain.Models.ViewModels;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

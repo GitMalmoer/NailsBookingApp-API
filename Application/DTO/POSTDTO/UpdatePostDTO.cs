@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Models.DTO.POSTDTO
+namespace Application.DTO.POSTDTO
 {
     public class UpdatePostDTO
     {

@@ -1,6 +1,6 @@
 ﻿using Domain.Models.POSTS;
 
-namespace Domain.Models.ViewModels
+namespace Application.ViewModels
 {
     public class CommentViewModel
     {

@@ -1,4 +1,4 @@
-﻿namespace Domain.Models.DTO.AUTHDTO
+﻿namespace Application.DTO.AUTHDTO
 {
     public class LoginResponseDTO
     {
