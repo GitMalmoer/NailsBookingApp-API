@@ -1,5 +1,5 @@
-# NailsBookingApp-API-Public
-Public version of my Nails Booking API
+# NailsBookingApp-API
+Nails Booking API
 
 ## To do very soon:
 - Complete code architecture refactor with CQRS and MediatR pattern
