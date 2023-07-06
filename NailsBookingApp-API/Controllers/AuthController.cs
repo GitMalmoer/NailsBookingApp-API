@@ -1,27 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication;
-using NailsBookingApp_API.Services;
-using Stripe;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.Mvc;
 using Application.DTO.AUTHDTO;
 using Application.MediatR.Auth.Commands;
 using Application.MediatR.Auth.Querries;
-using Application.ViewModels;
 using Domain.Models;
 using Domain.Utility;
 using Microsoft.AspNetCore.Authorization;
-using NailsBookingApp_API.Services.AUTH;
-using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Utilities.Encoders;
-using Infrastructure.Persistence;
 using NailsBookingApp_API.Controllers.Base;
 
 namespace NailsBookingApp_API.Controllers
@@ -30,25 +13,6 @@ namespace NailsBookingApp_API.Controllers
     [ApiController]
     public class AuthController : ApiControllerBase
     {
-        private readonly AppDbContext _dbContext;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IEmailService _emailService;
-        private readonly IAuthService _authService;
-        private ApiResponse _apiResponse;
-        private string _secretKey;
-
-        public AuthController(AppDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IEmailService emailService, IAuthService authService)
-        {
-            _dbContext = dbContext;
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _emailService = emailService;
-            _authService = authService;
-            _apiResponse = new ApiResponse();
-            _secretKey = configuration.GetValue<string>("ApiSettings:Secret");
-        }
-
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequestDTO registerRequestDto)
         {
@@ -77,11 +41,7 @@ namespace NailsBookingApp_API.Controllers
             var result = await Mediator.Send(new ChangePasswordCommand(changePasswordDTO));
             return await HandleResult(result);
         }
-        /// <summary>
-        /// The token and user has been decoded by register action and is decoded on the go in the confirmEmail action
-        /// </summary>
-        /// <param name="confirmEmailDto"></param>
-        /// <returns></returns>
+
         [HttpPost("confirmEmail")]
         public async Task<ActionResult> ConfirmEmail([FromBody] ConfirmEmailDTO confirmEmailDto)
         {
@@ -114,69 +74,22 @@ namespace NailsBookingApp_API.Controllers
         [HttpPost("profile/changeProfilePic")]
         public async Task<ActionResult<ApiResponse>> ChangeProfilePic(ChangeProfilePictureDTO changeProfilePicDto)
         {
-            var user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == changeProfilePicDto.UserId);
-            var profilePic =
-                await _dbContext.AvatarPictures.FirstOrDefaultAsync(x => x.Id == changeProfilePicDto.AvatarId);
-
-            if (user == null || profilePic == null)
-            {
-                _apiResponse.IsSuccess = false;
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.ErrorMessages.Add("User not found or Avatar not found");
-                return BadRequest(_apiResponse);
-            }
-
-            user.AvatarPictureId = changeProfilePicDto.AvatarId;
-            _dbContext.Update(user);
-            await _dbContext.SaveChangesAsync();
-            _apiResponse.IsSuccess = true;
-            _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-            return Ok(_apiResponse);
+            var result = await Mediator.Send(new ChangeProfilePicCommand(changeProfilePicDto));
+            return await HandleResult(result);
         }
 
         [HttpGet("profile/getProfilePic/{userId}")]
         public async Task<ActionResult<ApiResponse>> GetProfilePic(string userId)
         {
-            var user = await _dbContext.ApplicationUsers
-                .Include(x => x.AvatarPicture)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-
-            if (user == null)
-            {
-                _apiResponse.IsSuccess = false;
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.ErrorMessages.Add("User not found or Avatar not found");
-                return BadRequest(_apiResponse);
-            }
-            else
-            {
-                _apiResponse.IsSuccess = true;
-                _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                _apiResponse.Result = user.AvatarPicture.Path;
-                return Ok(_apiResponse);
-            }
+            var result = await Mediator.Send(new GetProfilePicQuerry(userId));
+            return await HandleResult(result);
         }
 
         [HttpGet("profile/getAllAvatars")]
         public async Task<ActionResult<ApiResponse>> GetAllAvatars()
         {
-            var avatars = _dbContext.AvatarPictures;
-
-            if (avatars == null)
-            {
-                _apiResponse.IsSuccess = false;
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.ErrorMessages.Add("User not found or Avatar not found");
-                return BadRequest(_apiResponse);
-            }
-            else
-            {
-                _apiResponse.IsSuccess = true;
-                _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                _apiResponse.Result = avatars;
-                return Ok(_apiResponse);
-            }
+            var result = await Mediator.Send(new GetAllAvatarsQuerry());
+            return await HandleResult(result);
         }
     }
 

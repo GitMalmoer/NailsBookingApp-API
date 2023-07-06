@@ -12,6 +12,10 @@ using Application.DTO.AUTHDTO;
 
 namespace Application.MediatR.Auth.Commands
 {
+    /// <summary>
+    /// The token and user has been encoded(Base64) by register action and is decoded on the go in the confirmEmail action
+    /// </summary>
+    /// <param name="confirmEmailDto"></param>
     public record ConfirmEmailCommand(ConfirmEmailDTO confirmEmailDto) : IRequest<ApiResponse>;
 
     public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, ApiResponse>
