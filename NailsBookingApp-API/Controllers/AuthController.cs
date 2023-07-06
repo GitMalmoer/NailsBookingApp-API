@@ -74,59 +74,8 @@ namespace NailsBookingApp_API.Controllers
         [HttpPost("changePassword")]
         public async Task<ActionResult<ApiResponse>> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add("Model state is not valid");
-                _apiResponse.ErrorMessages.AddRange(ModelState
-                    .Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList());
-                return BadRequest(_apiResponse);
-            }
-
-            // IN FRONTEND GET THIS VALUE FROM DECODING JWT
-            ApplicationUser userFromDb =
-                await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u =>
-                    u.Email.ToLower() == changePasswordDTO.email);
-
-            if (userFromDb != null)
-            {
-                if (changePasswordDTO.NewPassword == changePasswordDTO.OldPassword)
-                {
-                    _apiResponse.IsSuccess = false;
-                    _apiResponse.ErrorMessages.Add("Old password and new Password are the same");
-                    _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_apiResponse);
-                }
-
-                var result = await _userManager.ChangePasswordAsync(userFromDb, changePasswordDTO.OldPassword, changePasswordDTO.NewPassword);
-                if (result.Succeeded)
-                {
-                    _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                    _apiResponse.IsSuccess = true;
-                    return Ok(_apiResponse);
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        _apiResponse.ErrorMessages.Add(error.Description);
-                    }
-                    _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                    _apiResponse.IsSuccess = false;
-                    return BadRequest(_apiResponse);
-                }
-
-            }
-
-            _apiResponse.IsSuccess = false;
-            _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-            _apiResponse.ErrorMessages.Add("User does not exist");
-            return NotFound(_apiResponse);
-
+            var result = await Mediator.Send(new ChangePasswordCommand(changePasswordDTO));
+            return await HandleResult(result);
         }
         /// <summary>
         /// The token and user has been decoded by register action and is decoded on the go in the confirmEmail action
