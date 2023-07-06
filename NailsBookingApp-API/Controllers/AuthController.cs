@@ -60,137 +60,15 @@ namespace NailsBookingApp_API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequestDTO loginRequestDto)
         {
-            ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
-            if (user == null)
-            {
-                _apiResponse.IsSuccess = false;
-                _apiResponse.HttpStatusCode = HttpStatusCode.NotFound;
-                _apiResponse.ErrorMessages.Add("username or password are invalid");
-                return NotFound(_apiResponse);
-            }
-
-            var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-
-            if (isPasswordValid == false)
-            {
-                _apiResponse.Result = new LoginResponseDTO();
-                _apiResponse.IsSuccess = false;
-                _apiResponse.HttpStatusCode = HttpStatusCode.NotFound;
-                _apiResponse.ErrorMessages.Add("username or password are invalid");
-                return NotFound(_apiResponse);
-            }
-
-            try
-            {
-                // GENERATE JWT
-                var roles = await _userManager.GetRolesAsync(user);
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                byte[] key = Encoding.UTF8.GetBytes(_secretKey);
-
-                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim("Id", user.Id),
-                        new Claim("Name", user.Name),
-                        new Claim("LastName", user.LastName),
-                        new Claim("Email", loginRequestDto.UserName),
-                        new Claim("ConfirmedEmail", user.EmailConfirmed.ToString()),
-                        new Claim(ClaimTypes.Role, roles.FirstOrDefault()),
-                    }),
-                    Expires = DateTime.Now.AddDays(30),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor);
-                //SecurityToken securitytest = tokenHandler.CreateJwtSecurityToken(tokenDescriptor); // REMOVE
-
-                LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
-                {
-                    Email = loginRequestDto.UserName,
-                    Token = tokenHandler.WriteToken(securityToken),
-                };
-
-                if (loginResponseDTO.Email == null || string.IsNullOrEmpty(loginResponseDTO.Token))
-                {
-                    _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                    _apiResponse.ErrorMessages.Add("username or password is incorrect \n unidentified 444 error");
-                    _apiResponse.IsSuccess = false;
-                    return BadRequest(_apiResponse);
-                }
-
-                _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                _apiResponse.IsSuccess = true;
-                _apiResponse.Result = loginResponseDTO;
-                return Ok(_apiResponse);
-            }
-            catch (Exception e)
-            {
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add(e.ToString());
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                return BadRequest(_apiResponse);
-            }
+            var result = await Mediator.Send(new LoginCommand(loginRequestDto));
+            return await HandleResult(result);
         }
 
         [HttpPost("loginWithGoogle")]
         public async Task<ActionResult<ApiResponse>> LoginWithGoogle([FromBody] ExternalLoginRequestDTO externalLoginRequestDTO)
         {
-            ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == externalLoginRequestDTO.Email.ToLower());
-            if (user == null)
-            {
-                ApplicationUser newUser = new ApplicationUser()
-                {
-                    UserName = externalLoginRequestDTO.Email,
-                    Email = externalLoginRequestDTO.Email,
-                    Name = externalLoginRequestDTO.FirstName,
-                    LastName = externalLoginRequestDTO.LastName,
-                    EmailConfirmed = externalLoginRequestDTO.EmailConfirmed,
-                    NormalizedEmail = externalLoginRequestDTO.Email.ToUpper(),
-                    ExternalSubjectId = externalLoginRequestDTO.ExternalSubjectId,
-                    AccountCreateDate = DateTime.Now,
-                };
-
-                var result = await _userManager.CreateAsync(newUser);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
-                    user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName.ToLower() == externalLoginRequestDTO.Email.ToLower());
-
-                    string token = await _authService.GenerateJwt(user);
-                    if (token != null)
-                    {
-                        _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                        _apiResponse.IsSuccess = true;
-                        _apiResponse.Result = token;
-                        return Ok(_apiResponse);
-                    }
-                }
-
-            }
-            else
-            {
-                if ((user.ExternalSubjectId != null && user.ExternalSubjectId.Length > 0) && user.ExternalSubjectId == externalLoginRequestDTO.ExternalSubjectId)
-                {
-                    var token = await _authService.GenerateJwt(user);
-                    if (token != null)
-                    {
-                        _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                        _apiResponse.IsSuccess = true;
-                        _apiResponse.Result = token;
-                        return Ok(_apiResponse);
-                    }
-                }
-                else if (user.ExternalSubjectId == null)
-                {
-
-                }
-            }
-
-            _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-            _apiResponse.IsSuccess = false;
-            _apiResponse.ErrorMessages.Add("Error! Try Again");
-            return BadRequest(_apiResponse);
+            var result = await Mediator.Send(new LoginWithGoogleCommand(externalLoginRequestDTO));
+            return await HandleResult(result);
         }
 
         [HttpPost("changePassword")]
