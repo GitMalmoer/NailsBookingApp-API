@@ -1,11 +1,12 @@
 ﻿using System.Net;
+using Domain.Models;
+using Domain.Models.DTO;
+using Domain.Utility;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NailsBookingApp_API.Models;
-using NailsBookingApp_API.Models.DTO;
 using NailsBookingApp_API.Services;
-using NailsBookingApp_API.Utility;
 
 namespace NailsBookingApp_API.Controllers
 {

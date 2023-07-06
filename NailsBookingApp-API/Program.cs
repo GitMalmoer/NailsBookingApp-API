@@ -4,17 +4,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NailsBookingApp_API.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Application;
+using Application.Services;
 using Azure.Storage.Blobs;
-using NailsBookingApp_API.Data;
+using Domain.Models;
+using Infrastructure;
 using NailsBookingApp_API.Middleware;
 using NailsBookingApp_API.Services;
 using NailsBookingApp_API.Services.AUTH;
 using NLog;
 using Stripe.BillingPortal;
 using NLog.Web;
+using Infrastructure.Persistence;
 
 namespace NailsBookingApp_API
 {
@@ -30,7 +33,8 @@ namespace NailsBookingApp_API
 
                 var builder = WebApplication.CreateBuilder(args);
 
-                // Add services to the container.
+                // APPLICATION PROJECT DEPENDENCIES
+                builder.Services.AddApplication();
 
                 builder.Services.AddControllers().AddJsonOptions(x =>
                     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -39,11 +43,7 @@ namespace NailsBookingApp_API
                 builder.Services.AddTransient<ErrorHandlingMiddleware>();
                 builder.Services.AddScoped<IAuthService, AuthService>();
 
-                // SETTING UP CONNECTION WITH DB
-                builder.Services.AddDbContext<AppDbContext>(options =>
-                {
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"));
-                });
+                builder.Services.AddInfrastructure(builder.Configuration);
 
                 // BLOB SERVICE
                 builder.Services.AddSingleton(b =>

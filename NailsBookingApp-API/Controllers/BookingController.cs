@@ -1,9 +1,10 @@
 ﻿using System.Net;
+using Domain.Models;
+using Domain.Models.BOOKING;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NailsBookingApp_API.Models;
-using NailsBookingApp_API.Models.BOOKING;
 using NailsBookingApp_API.Services;
 using Stripe;
 

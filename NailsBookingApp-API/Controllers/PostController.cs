@@ -1,14 +1,15 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using System.Xml.Linq;
+using Domain.Models;
+using Domain.Models.DTO.POSTDTO;
+using Domain.Models.POSTS;
+using Domain.Models.ViewModels;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NailsBookingApp_API.Models;
-using NailsBookingApp_API.Models.DTO.POSTDTO;
-using NailsBookingApp_API.Models.POSTS;
-using NailsBookingApp_API.Models.ViewModels;
 
 namespace NailsBookingApp_API.Controllers
 {
@@ -336,7 +337,7 @@ namespace NailsBookingApp_API.Controllers
                 _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.IsSuccess = false;
                 _apiResponse.ErrorMessages.Add("Post not found or you are trying to update not your own post.");
-                return BadRequest();
+                return BadRequest(_apiResponse);
             }
 
             if (string.IsNullOrEmpty(updatePostDto.Content))
@@ -344,7 +345,7 @@ namespace NailsBookingApp_API.Controllers
                 _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.IsSuccess = false;
                 _apiResponse.ErrorMessages.Add("Content cannot be empty");
-                return BadRequest();
+                return BadRequest(_apiResponse);
             }
 
             post.Content = updatePostDto.Content;

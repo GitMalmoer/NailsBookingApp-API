@@ -2,29 +2,32 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NailsBookingApp_API.Models;
 using System.Net;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using NailsBookingApp_API.Utility;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
-using NailsBookingApp_API.Models.DTO.AUTHDTO;
-using NailsBookingApp_API.Models.ViewModels;
 using NailsBookingApp_API.Services;
 using Stripe;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
+using Application.MediatR.Auth.Commands;
+using Domain.Models;
+using Domain.Models.DTO.AUTHDTO;
+using Domain.Models.ViewModels;
+using Domain.Utility;
 using Microsoft.AspNetCore.Authorization;
 using NailsBookingApp_API.Services.AUTH;
 using Newtonsoft.Json.Linq;
 using Org.BouncyCastle.Utilities.Encoders;
+using Infrastructure.Persistence;
+using NailsBookingApp_API.Controllers.Base;
 
 namespace NailsBookingApp_API.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : ApiControllerBase
     {
         private readonly AppDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -49,79 +52,9 @@ namespace NailsBookingApp_API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequestDTO registerRequestDto)
         {
+            ApiResponse result = await Mediator.Send(new RegisterCommand(registerRequestDto));
 
-            if (!ModelState.IsValid)
-            {
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add("Model state is not valid");
-                _apiResponse.ErrorMessages.Add(ModelState.Values.ToString());
-                return BadRequest(_apiResponse);
-            }
-
-            ApplicationUser userFromDb = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Email.ToLower() == registerRequestDto.Email.ToLower());
-
-            if (userFromDb != null)
-            {
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add("User name allready exists");
-                return BadRequest(_apiResponse);
-            }
-
-            ApplicationUser newUser = new ApplicationUser()
-            {
-                UserName = registerRequestDto.Email,
-                Email = registerRequestDto.Email,
-                Name = registerRequestDto.Name,
-                LastName = registerRequestDto.LastName,
-                NormalizedEmail = registerRequestDto.Email.ToUpper(),
-                AccountCreateDate = DateTime.Now,
-            };
-
-            try
-            {
-                var result = await _userManager.CreateAsync(newUser, registerRequestDto.Password);
-
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(newUser, SD.Role_Customer);
-
-                    //GENERATE EMAIL CONFIRMATION TOKEN
-                    var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-
-                    //var confirmationLink = Url.Action("ConfirmEmail", "Auth",
-                    //  new { UserId = newUser.Id, Token = emailConfirmationToken }, Request.Scheme);
-
-                    var token = Base64UrlEncoder.Encode(emailConfirmationToken);
-                    var userEncoded = Base64UrlEncoder.Encode(newUser.Id);
-
-                    var confirmationLink = $"{SD.actualWebsite}/confirmemail/?token={token}&user={userEncoded}";
-
-                    _apiResponse.Result = confirmationLink; // TEST REMOVE
-
-                    await _emailService.SendEmailVeryficationLink(confirmationLink, newUser.Email);
-
-                    //ROLE IS CREATED IN APP DB INITIALIZER SEED METHOD
-                    _apiResponse.IsSuccess = true;
-                    //_apiResponse.Result = newUser; // JUST TEST REMOVE AFTER TESTING
-
-                    _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-                    return Ok(_apiResponse);
-                }
-            }
-            catch (Exception e)
-            {
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add(e.ToString());
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                return BadRequest(_apiResponse);
-            }
-
-            _apiResponse.IsSuccess = false;
-            _apiResponse.ErrorMessages.Add(SD.error);
-            _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-            return BadRequest(_apiResponse);
+            return await HandleResult(result);
         }
 
         [HttpPost("login")]
@@ -247,7 +180,7 @@ namespace NailsBookingApp_API.Controllers
                         _apiResponse.Result = token;
                         return Ok(_apiResponse);
                     }
-                } 
+                }
                 else if (user.ExternalSubjectId == null)
                 {
 

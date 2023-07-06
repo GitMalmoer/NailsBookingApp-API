@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Application.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using NailsBookingApp_API.Exceptions;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
