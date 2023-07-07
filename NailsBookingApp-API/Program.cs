@@ -30,7 +30,6 @@ namespace NailsBookingApp_API
 
             try
             {
-
                 var builder = WebApplication.CreateBuilder(args);
 
                 // APPLICATION PROJECT DEPENDENCIES

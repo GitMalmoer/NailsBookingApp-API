@@ -13,10 +13,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
+    <PackageReference Include="Stripe.net" Version="41.10.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MediatR\Booking\" />
     <Folder Include="MediatR\EmailMessage\" />
     <Folder Include="MediatR\Logs\" />
     <Folder Include="MediatR\Post\" />
