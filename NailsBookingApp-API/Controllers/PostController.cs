@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Xml.Linq;
 using Application.DTO.POSTDTO;
+using Application.MediatR.Post.Commands;
 using Application.ViewModels;
 using Domain.Models;
 using Domain.Models.POSTS;
@@ -10,13 +11,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NailsBookingApp_API.Controllers.Base;
 
 namespace NailsBookingApp_API.Controllers
 {
-    [Route("api/post")]
     [ApiController]
+    [Route("api/post")]
     [Authorize]
-    public class PostController : ControllerBase
+    public class PostController : ApiControllerBase
     {
         private readonly AppDbContext _dbContext;
         private ApiResponse _apiResponse;
@@ -30,59 +32,18 @@ namespace NailsBookingApp_API.Controllers
         [HttpPost("createPost")]
         public async Task<ActionResult<ApiResponse>> CreatePost([FromBody] PostDTO postDto)
         {
-            var userFromDb = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == postDto.ApplicationUserId);
-
-            if (userFromDb == null || string.IsNullOrEmpty(postDto.Content))
-            {
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add("userid is wrong or content is empty");
-                return BadRequest(_apiResponse);
-            }
-
-            var post = _dbContext.Posts.Add(new Post()
-            {
-                ApplicationUserId = postDto.ApplicationUserId,
-                Content = postDto.Content,
-                CreateDateTime = DateTime.Now,
-            });
-
-            await _dbContext.SaveChangesAsync();
-
-            _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-            _apiResponse.IsSuccess = true;
-            return Ok(_apiResponse);
-
+            var result = await Mediator.Send(new CreatePostCommand(postDto));
+            return await HandleResult(result);
         }
 
         [HttpPost("addComment")]
         public async Task<ActionResult<ApiResponse>> AddComment([FromBody] CommentDTO commentDTO)
         {
-            var userFromDb = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == commentDTO.ApplicationUserId);
-
-            if (userFromDb == null || string.IsNullOrEmpty(commentDTO.commentContent) || commentDTO.PostId == null ||
-                commentDTO.PostId <= 0)
-            {
-                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
-                _apiResponse.IsSuccess = false;
-                _apiResponse.ErrorMessages.Add("userid is wrong or content is empty");
-                return BadRequest(_apiResponse);
-            }
-
-            var comment = _dbContext.Comments.Add(new Comment()
-            {
-                ApplicationUserId = commentDTO.ApplicationUserId,
-                CommentContent = commentDTO.commentContent,
-                CreateDateTime = DateTime.Now,
-                PostId = commentDTO.PostId,
-            });
-
-            await _dbContext.SaveChangesAsync();
-
-            _apiResponse.HttpStatusCode = HttpStatusCode.OK;
-            _apiResponse.IsSuccess = true;
-            return Ok(_apiResponse);
+            var result = await Mediator.Send(new AddCommentCommand(commentDTO));
+            return await HandleResult(result);
         }
+
+
         [AllowAnonymous]
         [HttpGet("getPosts")]
         public async Task<ActionResult<ApiResponse>> GetPosts()
@@ -161,7 +122,7 @@ namespace NailsBookingApp_API.Controllers
                 return BadRequest(_apiResponse);
             }
 
-            // LIKING JUST A COMMENT
+            // LIKING JUST A SINGLE COMMENT
             if ((likeDto.PostId == null || likeDto.PostId == 0) && likeDto.CommentId > 0)
             {
                 var like = new Like()
@@ -193,7 +154,7 @@ namespace NailsBookingApp_API.Controllers
 
             }
 
-            // LIKING JUST A POST
+            // LIKING JUST A SINGLE POST
             if (likeDto.PostId > 0 && (likeDto.CommentId == null || likeDto.CommentId == 0))
             {
                 var like = new Like()

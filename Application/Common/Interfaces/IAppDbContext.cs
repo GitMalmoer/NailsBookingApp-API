@@ -27,6 +27,8 @@ namespace Application.Common.Interfaces
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         EntityEntry Update(object entity);
 
+        void RemoveRange(params object[] entities);
+
 
     }
 }

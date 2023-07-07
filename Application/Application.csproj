@@ -17,9 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MediatR\Logs\" />
-    <Folder Include="MediatR\Post\" />
-    <Folder Include="MediatR\Payment\" />
+    <Folder Include="MediatR\Post\Querries\" />
   </ItemGroup>
 
 </Project>
