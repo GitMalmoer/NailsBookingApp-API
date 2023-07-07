@@ -16,8 +16,4 @@
     <PackageReference Include="Stripe.net" Version="41.10.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MediatR\Post\Querries\" />
-  </ItemGroup>
-
 </Project>
