@@ -17,14 +17,9 @@ namespace NailsBookingApp_API.Controllers
     [ApiController]
     public class BookingController : ApiControllerBase
     {
-        private readonly AppDbContext _dbContext;
-        private readonly IConfiguration _configuration;
         private ApiResponse _apiResponse;
-
-        public BookingController(AppDbContext dbContext, IConfiguration configuration)
+        public BookingController()
         {
-            _dbContext = dbContext;
-            _configuration = configuration;
             _apiResponse = new ApiResponse();
         }
 
