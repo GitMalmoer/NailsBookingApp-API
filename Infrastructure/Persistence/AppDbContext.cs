@@ -19,7 +19,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<EmailQuestion> EmailQuestions { get; set; }
 
-        public virtual DbSet<Log> Logs { get; set; }
+        public DbSet<Log> Logs { get; set; }
 
         public DbSet<Like> Likes { get; set; }
 

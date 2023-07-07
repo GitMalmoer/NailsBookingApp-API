@@ -25,7 +25,15 @@ namespace Application.MediatR.Logging
         }
         public async Task<ApiResponse> Handle(ClearLogsCommand request, CancellationToken cancellationToken)
         {
-            var logs = _dbContext.Logs;
+            var logs = await _dbContext.Logs.ToListAsync();
+
+            if (!logs.Any())
+            {
+                _apiResponse.HttpStatusCode = HttpStatusCode.NotFound;
+                _apiResponse.IsSuccess = true;
+                _apiResponse.ErrorMessages.Add("Logs list is empty");
+                return _apiResponse;
+            }
             _dbContext.RemoveRange(logs);
 
             var result = await _dbContext.SaveChangesAsync(cancellationToken);

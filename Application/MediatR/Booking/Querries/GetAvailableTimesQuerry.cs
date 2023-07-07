@@ -31,6 +31,7 @@ namespace Application.MediatR.Booking.Querries
 
             if (!isDateOk)
             {
+                _apiResponse.HttpStatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.ErrorMessages.Add("Wrong date");
                 _apiResponse.IsSuccess = false;
                 return _apiResponse;
