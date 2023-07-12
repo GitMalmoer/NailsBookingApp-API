@@ -1,11 +1,6 @@
 # NailsBookingApp-API
 Nails Booking API
 
-## To do very soon:
-- Complete code architecture refactor with CQRS and MediatR pattern
-- Make code loosely coupled. For test purposes evrtything is now tightly coupled in controllers.
-- Refactor ApiResponse - This class is repeated almost in every request. This class is not necessary because im going to base on status codes and middlewares to handle api response.
-
 Frontend: https://nailsbookingapp.netlify.app/
 
 Backend: https://nailsbookingapi.azurewebsites.net/index.html
