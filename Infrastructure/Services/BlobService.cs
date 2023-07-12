@@ -1,8 +1,9 @@
-﻿using Azure.Storage.Blobs;
+﻿using Application.Common.Interfaces;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Domain.Models;
 
-namespace Application.Services
+namespace Infrastructure.Services
 {
     public class BlobService : IBlobService
     {

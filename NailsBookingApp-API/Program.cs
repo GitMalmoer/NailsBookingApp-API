@@ -7,17 +7,16 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using Application;
-using Application.Services;
 using Azure.Storage.Blobs;
 using Domain.Models;
 using Infrastructure;
 using NailsBookingApp_API.Middleware;
-using NailsBookingApp_API.Services;
-using NailsBookingApp_API.Services.AUTH;
 using NLog;
 using Stripe.BillingPortal;
 using NLog.Web;
 using Infrastructure.Persistence;
+using Application.Common.Interfaces;
+using Infrastructure.Services;
 
 namespace NailsBookingApp_API
 {

@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace NailsBookingApp_API.Services
+namespace Application.Common.Interfaces
 {
     public interface IEmailService
     {

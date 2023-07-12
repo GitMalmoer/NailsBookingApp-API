@@ -9,7 +9,6 @@ using Application.DTO;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NailsBookingApp_API.Services;
 
 namespace Application.MediatR.EmailMessage.Commands
 {

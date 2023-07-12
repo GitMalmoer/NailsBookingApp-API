@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using Application.Services;
+using Application.Common.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Models;
 using Domain.Utility;

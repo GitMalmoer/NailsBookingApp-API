@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NailsBookingApp_API.Controllers.Base;
-using NailsBookingApp_API.Services;
 using Stripe;
 
 namespace NailsBookingApp_API.Controllers

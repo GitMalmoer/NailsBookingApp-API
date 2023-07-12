@@ -12,7 +12,6 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using NailsBookingApp_API.Services;
 
 namespace Application.MediatR.Auth.Commands
 {

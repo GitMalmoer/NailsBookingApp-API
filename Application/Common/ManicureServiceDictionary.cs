@@ -1,6 +1,6 @@
-﻿namespace NailsBookingApp_API.Services
+﻿namespace Application.Common
 {
-    public static class ServiceDictionary
+    public static class ManicureServiceDictionary
     {
         private static Dictionary<int, double> servicePrices = new Dictionary<int, double>()
         {

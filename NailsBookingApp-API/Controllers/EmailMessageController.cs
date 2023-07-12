@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Application.Common.Interfaces;
 using Application.DTO;
 using Application.MediatR.EmailMessage.Commands;
 using Application.MediatR.EmailMessage.Querries;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NailsBookingApp_API.Controllers.Base;
-using NailsBookingApp_API.Services;
 
 namespace NailsBookingApp_API.Controllers
 {

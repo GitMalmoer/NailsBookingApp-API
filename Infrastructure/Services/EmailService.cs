@@ -1,11 +1,11 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Models;
 using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 
-namespace NailsBookingApp_API.Services
+namespace Infrastructure.Services
 {
     public class EmailService : IEmailService
     {

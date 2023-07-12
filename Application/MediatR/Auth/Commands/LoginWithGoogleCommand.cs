@@ -11,7 +11,7 @@ using Domain.Utility;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using NailsBookingApp_API.Services.AUTH;
+
 
 namespace Application.MediatR.Auth.Commands
 {

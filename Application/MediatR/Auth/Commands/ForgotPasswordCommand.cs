@@ -4,13 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using Application.DTO.AUTHDTO;
 using Domain.Models;
 using Domain.Utility;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using NailsBookingApp_API.Services;
 
 namespace Application.MediatR.Auth.Commands
 {

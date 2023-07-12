@@ -1,9 +1,9 @@
 ﻿using System.Net;
+using Application.Common;
 using Domain.Models;
 using Domain.Models.BOOKING;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using NailsBookingApp_API.Services;
 using Stripe;
 
 namespace Application.MediatR.Booking.Commands
@@ -43,7 +43,7 @@ namespace Application.MediatR.Booking.Commands
             }
 
             // GETTING THE PRICE FROM DICTIONARY
-            double servicePrice = ServiceDictionary.GetPriceByService(request.createAppointmentDto.ServiceValue);
+            double servicePrice = ManicureServiceDictionary.GetPriceByService(request.createAppointmentDto.ServiceValue);
 
             if (servicePrice == 0)
             {

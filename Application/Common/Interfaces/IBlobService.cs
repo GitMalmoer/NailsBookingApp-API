@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Application.Services;
+namespace Application.Common.Interfaces;
 
 public interface IBlobService
 {

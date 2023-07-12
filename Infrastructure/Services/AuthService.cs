@@ -1,18 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Common.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
-namespace NailsBookingApp_API.Services.AUTH
+namespace Infrastructure.Services
 {
-    public interface IAuthService
-    {
-        Task<string> GenerateJwt(ApplicationUser user);
-    }
 
     public class AuthService : IAuthService
     {
