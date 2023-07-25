@@ -5,13 +5,17 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NailsBookingApp-API", "NailsBookingApp-API\NailsBookingApp-API.csproj", "{9CDCAD0A-A990-4DA9-BFDB-D653472CB656}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{5FA85D48-B3C8-484D-B769-26501E81EB60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{5FA85D48-B3C8-484D-B769-26501E81EB60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{D7C2978F-EAE4-4F15-8B43-5B377514872D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{D7C2978F-EAE4-4F15-8B43-5B377514872D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{83FCB51C-F621-49F9-AB87-32A319C302E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{83FCB51C-F621-49F9-AB87-32A319C302E7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SRC", "SRC", "{E9B7C988-1874-44B5-A344-5B477935D2AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TESTS", "TESTS", "{E2C40FB3-0729-41FA-AC93-521523F7C9FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NailsBookingApp.IntegrationTests", "NailsBookingApp.IntegrationTests\NailsBookingApp.IntegrationTests.csproj", "{D0C2212D-3A70-48E2-8D74-79591FCF4B37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +39,10 @@ Global
 		{83FCB51C-F621-49F9-AB87-32A319C302E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83FCB51C-F621-49F9-AB87-32A319C302E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83FCB51C-F621-49F9-AB87-32A319C302E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C2212D-3A70-48E2-8D74-79591FCF4B37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C2212D-3A70-48E2-8D74-79591FCF4B37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C2212D-3A70-48E2-8D74-79591FCF4B37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C2212D-3A70-48E2-8D74-79591FCF4B37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +52,7 @@ Global
 		{5FA85D48-B3C8-484D-B769-26501E81EB60} = {E9B7C988-1874-44B5-A344-5B477935D2AA}
 		{D7C2978F-EAE4-4F15-8B43-5B377514872D} = {E9B7C988-1874-44B5-A344-5B477935D2AA}
 		{83FCB51C-F621-49F9-AB87-32A319C302E7} = {E9B7C988-1874-44B5-A344-5B477935D2AA}
+		{D0C2212D-3A70-48E2-8D74-79591FCF4B37} = {E2C40FB3-0729-41FA-AC93-521523F7C9FE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6567DCA5-2DB0-40B3-BB6D-926652C0E97A}

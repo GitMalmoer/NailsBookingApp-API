@@ -40,11 +40,14 @@ namespace Infrastructure.Persistence
 
                 if (context.Database.CanConnect())
                 {
-                    var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
-
-                    if (pendingMigrations.Any())
+                    if (context.Database.IsRelational())
                     {
-                        context.Database.Migrate();
+                        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+
+                        if (pendingMigrations.Any())
+                        {
+                            context.Database.Migrate();
+                        }
                     }
                 }
 
