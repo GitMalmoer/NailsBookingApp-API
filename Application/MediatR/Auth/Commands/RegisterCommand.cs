@@ -64,22 +64,15 @@ namespace Application.MediatR.Auth.Commands
                     //GENERATE EMAIL CONFIRMATION TOKEN
                     var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-                    //var confirmationLink = Url.Action("ConfirmEmail", "Auth",
-                    //  new { UserId = newUser.Id, Token = emailConfirmationToken }, Request.Scheme);
-
                     var token = Base64UrlEncoder.Encode(emailConfirmationToken);
                     var userEncoded = Base64UrlEncoder.Encode(newUser.Id);
 
                     var confirmationLink = $"{SD.actualWebsite}/confirmemail/?token={token}&user={userEncoded}";
 
-                    _apiResponse.Result = confirmationLink; // TEST REMOVE
 
                     await _emailService.SendEmailVeryficationLink(confirmationLink, newUser.Email);
 
-                    //ROLE IS CREATED IN APP DB INITIALIZER SEED METHOD
                     _apiResponse.IsSuccess = true;
-                    //_apiResponse.Result = newUser; // JUST TEST REMOVE AFTER TESTING
-
                     _apiResponse.HttpStatusCode = HttpStatusCode.OK;
                     return _apiResponse;
                 }
